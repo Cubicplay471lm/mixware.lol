@@ -84,6 +84,16 @@ class AnnouncementRequest(BaseModel):
 class AdminLoginRequest(BaseModel):
     password: str
 
+class DiceGameRequest(BaseModel):
+    login: str
+    bet: int
+    guess: int  # 1-6
+
+class CoinFlipRequest(BaseModel):
+    login: str
+    bet: int
+    guess: str  # "heads" or "tails"
+
 # ===== БАЗА ДАННЫХ =====
 class Database:
     def __init__(self, path="karasik_data.json"):
@@ -523,6 +533,79 @@ async def api_get_all():
 async def api_clear_all():
     db.clear_all()
     return {"status": "success"}
+
+# ===== КАЗИНО =====
+@app.post("/api/casino/dice")
+async def play_dice(data: DiceGameRequest):
+    user = db.get_user(data.login)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    if data.bet <= 0:
+        raise HTTPException(status_code=400, detail="Ставка должна быть положительной")
+    
+    if user.get("balance", 0) < data.bet:
+        raise HTTPException(status_code=400, detail="Недостаточно средств")
+    
+    if data.guess < 1 or data.guess > 6:
+        raise HTTPException(status_code=400, detail="Угадай число от 1 до 6")
+    
+    # Бросок кубика
+    result = random.randint(1, 6)
+    win = result == data.guess
+    
+    if win:
+        winnings = data.bet * 5  # 5x множитель при выигрыше
+        user["balance"] = user.get("balance", 0) + winnings
+    else:
+        user["balance"] = user.get("balance", 0) - data.bet
+    
+    db.update_user(data.login, user)
+    
+    return {
+        "status": "success",
+        "result": result,
+        "guess": data.guess,
+        "win": win,
+        "winnings": winnings if win else -data.bet,
+        "new_balance": user["balance"]
+    }
+
+@app.post("/api/casino/coinflip")
+async def play_coinflip(data: CoinFlipRequest):
+    user = db.get_user(data.login)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    if data.bet <= 0:
+        raise HTTPException(status_code=400, detail="Ставка должна быть положительной")
+    
+    if user.get("balance", 0) < data.bet:
+        raise HTTPException(status_code=400, detail="Недостаточно средств")
+    
+    if data.guess not in ["heads", "tails"]:
+        raise HTTPException(status_code=400, detail="Угадай 'heads' или 'tails'")
+    
+    # Подбрасывание монетки
+    result = random.choice(["heads", "tails"])
+    win = result == data.guess
+    
+    if win:
+        winnings = data.bet * 2  # 2x множитель при выигрыше
+        user["balance"] = user.get("balance", 0) + winnings
+    else:
+        user["balance"] = user.get("balance", 0) - data.bet
+    
+    db.update_user(data.login, user)
+    
+    return {
+        "status": "success",
+        "result": result,
+        "guess": data.guess,
+        "win": win,
+        "winnings": winnings if win else -data.bet,
+        "new_balance": user["balance"]
+    }
 
 # ===== СИСТЕМА КЛЮЧЕЙ =====
 KEYS_FILE = "keys.json"
