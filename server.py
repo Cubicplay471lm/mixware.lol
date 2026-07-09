@@ -565,12 +565,12 @@ async def key_page():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>🔑 Генератор ключей</title>
+        <title>� MIXWARE Key Generator</title>
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
                 font-family: system-ui, -apple-system, sans-serif;
-                background: linear-gradient(135deg, #0a1f1a, #1a3a2a);
+                background: linear-gradient(135deg, #140a23, #2d1452);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
@@ -578,74 +578,117 @@ async def key_page():
                 padding: 20px;
             }
             .card {
-                background: rgba(255,255,255,0.95);
-                border-radius: 32px;
+                background: rgba(35, 20, 55, 0.95);
+                border: 2px solid #503078;
+                border-radius: 20px;
                 padding: 40px;
                 max-width: 500px;
                 width: 100%;
                 text-align: center;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                box-shadow: 0 20px 60px rgba(15, 5, 25, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             }
-            h1 { color: #2d4a3a; font-size: 2rem; margin-bottom: 8px; }
-            .sub { color: #6b8a7a; margin-bottom: 24px; }
+            h1 { 
+                color: #dc c8 ff; 
+                font-size: 2rem; 
+                margin-bottom: 8px; 
+                text-shadow: 0 0 20px rgba(180, 80, 255, 0.5);
+            }
+            .sub { 
+                color: #c8b4 dc; 
+                margin-bottom: 24px; 
+                font-size: 0.9rem;
+            }
             .captcha-box {
-                background: #f0f5f0;
-                border-radius: 16px;
+                background: rgba(25, 15, 40, 0.8);
+                border: 1px solid #503078;
+                border-radius: 12px;
                 padding: 20px;
                 margin-bottom: 20px;
             }
             .captcha-box .question {
-                font-size: 1.8rem;
+                font-size: 2rem;
                 font-weight: bold;
-                color: #1a3a2a;
+                color: #b450ff;
+                text-shadow: 0 0 10px rgba(180, 80, 255, 0.3);
             }
             .captcha-box input {
-                width: 80px;
-                padding: 10px;
-                font-size: 1.2rem;
-                border: 2px solid #b0d0b0;
-                border-radius: 12px;
+                width: 100px;
+                padding: 12px;
+                font-size: 1.3rem;
+                background: rgba(30, 15, 50, 0.9);
+                border: 2px solid #503078;
+                border-radius: 8px;
                 text-align: center;
-                margin-top: 8px;
+                margin-top: 12px;
+                color: #dc c8 ff;
+                transition: 0.2s;
             }
-            .captcha-box input:focus { outline: none; border-color: #4a8a4a; }
+            .captcha-box input:focus { 
+                outline: none; 
+                border-color: #b450ff; 
+                box-shadow: 0 0 15px rgba(180, 80, 255, 0.3);
+            }
             .key-display {
-                background: #1a3a2a;
-                color: #8fdb8f;
-                font-family: monospace;
-                font-size: 1.8rem;
+                background: rgba(30, 15, 50, 0.9);
+                border: 2px solid #b450ff;
+                color: #c864ff;
+                font-family: 'Courier New', monospace;
+                font-size: 1.5rem;
                 padding: 16px;
-                border-radius: 16px;
-                letter-spacing: 4px;
+                border-radius: 12px;
+                letter-spacing: 3px;
                 margin: 16px 0;
                 display: none;
+                text-shadow: 0 0 10px rgba(180, 80, 255, 0.5);
+                box-shadow: 0 0 20px rgba(180, 80, 255, 0.2);
             }
             button {
-                background: #4a8a4a;
+                background: linear-gradient(135deg, #b450ff, #c864ff);
                 color: white;
                 border: none;
                 padding: 14px 32px;
-                border-radius: 30px;
+                border-radius: 12px;
                 font-size: 1.1rem;
                 font-weight: bold;
                 cursor: pointer;
-                transition: 0.2s;
+                transition: 0.3s;
                 width: 100%;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                box-shadow: 0 4px 15px rgba(180, 80, 255, 0.4);
             }
-            button:hover { background: #3a7a3a; }
-            button:disabled { opacity: 0.5; cursor: not-allowed; }
-            .error { color: #c33; margin-top: 8px; font-size: 0.9rem; }
-            .success { color: #4a8a4a; margin-top: 8px; font-size: 0.9rem; }
+            button:hover { 
+                background: linear-gradient(135deg, #c864ff, #d878ff);
+                box-shadow: 0 6px 20px rgba(180, 80, 255, 0.6);
+                transform: translateY(-2px);
+            }
+            button:active { transform: translateY(0); }
+            button:disabled { 
+                opacity: 0.5; 
+                cursor: not-allowed;
+                transform: none;
+            }
+            .error { 
+                color: #ff6b6b; 
+                margin-top: 8px; 
+                font-size: 0.9rem;
+                text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+            }
+            .success { 
+                color: #00ff88; 
+                margin-top: 8px; 
+                font-size: 0.9rem;
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            }
             .footer {
                 margin-top: 20px;
-                font-size: 0.7rem;
-                color: #8a9a8a;
+                font-size: 0.75rem;
+                color: #8060a0;
             }
         </style>
     </head>
     <body>
         <div class="card">
-            <h1>🔑 Karasik Key</h1>
+            <h1>� MIXWARE Key</h1>
             <div class="sub">Реши капчу, чтобы получить ключ (действует 1 день)</div>
             
             <div class="captcha-box">
@@ -657,7 +700,7 @@ async def key_page():
             <div id="keyDisplay" class="key-display">KAR-XXX-XXX-XXX</div>
             <button id="generateBtn" onclick="generateKey()">🎣 Получить ключ</button>
             <div id="statusMsg" class="success"></div>
-            <div class="footer">🐟 Карасикославия · Генератор ключей</div>
+            <div class="footer">� MIXWARE.LOL · kt471 & Lmrbro</div>
         </div>
 
         <script>
