@@ -433,7 +433,7 @@
         "fullName": "Папа",
         "role": "Карасиковая папа"
       },
-      "password": "1408"
+      "password": "$2b$12$pWzPPQJBvPoZDr566.hpwuqo5bXINW2h06S.ouAmlfbnItCnOdCDK"
     },
     "Mom": {
       "chats": ["1782853066559"],
@@ -447,7 +447,7 @@
         "fullName": "мама",
         "role": "карасиковая мама"
       },
-      "password": "1408"
+      "password": "$2b$12$pWzPPQJBvPoZDr566.hpwuqo5bXINW2h06S.ouAmlfbnItCnOdCDK"
     },
     "e6all_767": {
       "balance": 620,
@@ -462,7 +462,7 @@
         "fullName": "Андрей",
         "role": "аутист"
       },
-      "password": "14886767"
+      "password": "$2b$12$oDPZIZccHP1HI4MjK0n3O.l9fDfjYV3F3bEy8gnaPYo/wYoRtX9ZW"
     },
     "kt471": {
       "balance": 676247,
@@ -477,7 +477,7 @@
         "fullName": "лев",
         "role": "БВР и ВСЕМОГУЩИЙ КАРАТЕЛЬ"
       },
-      "password": "201400"
+      "password": "$2b$12$OnlgASjjck/qxoOBqG/XcOgpUufLUrN4P2iJiY2BdKVNYqTaRpVUm"
     },
     "Ярикославикарослгомный": {
       "balance": 100,
