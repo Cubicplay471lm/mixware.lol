@@ -400,7 +400,6 @@ async function login() {
 function logout() {
     currentUser = null;
     localStorage.removeItem('karasik_user_login');
-    localStorage.removeItem('karasik_user_password');
     document.getElementById('userInfo').style.display = 'none';
     document.getElementById('loginArea').style.display = 'block';
     document.getElementById('chatView').style.display = 'none';
@@ -1001,13 +1000,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.color-btn[data-color="'+color+'"]')?.classList.add('active');
     
     const saved = localStorage.getItem('karasik_user_login');
-    const savedPassword = localStorage.getItem('karasik_user_password');
-    if (saved && savedPassword) {
+    if (saved) {
         document.getElementById('loginInput').value = saved;
-        document.getElementById('passwordInput').value = savedPassword;
-        setTimeout(() => {
-            login();
-        }, 500);
     }
     
     // Инициализировать WebSocket для звонков после входа
