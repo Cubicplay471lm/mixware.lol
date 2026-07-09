@@ -214,6 +214,9 @@ def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
+    # Если пароль не хэширован (старый формат), сравниваем напрямую
+    if not hashed.startswith("$2b$"):
+        return plain == hashed
     return bcrypt.checkpw(plain.encode('utf-8'), hashed.encode('utf-8'))
 
 # ===== АДМИН ЛОГИН (С ХЭШОМ) =====
