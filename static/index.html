@@ -167,6 +167,24 @@
         .admin-user-item .login { font-weight: bold; color: var(--text); }
         .admin-user-item .bal { color: var(--text-light); }
         
+        /* ===== КАЗИНО СТИЛИ ===== */
+        .casino-game { background: var(--bg2); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+        .casino-game h3 { color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .casino-game .bet-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+        .casino-game .bet-row label { font-weight: bold; color: var(--text); }
+        .casino-game .bet-row input { flex: 1; padding: 10px 14px; border: 2px solid var(--input-border); border-radius: 30px; background: var(--input-bg); color: var(--text); min-width: 100px; }
+        .casino-game .bet-row .guess-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        .casino-game .bet-row .guess-buttons button { padding: 8px 16px; border: 2px solid var(--border); border-radius: 30px; background: var(--card); color: var(--text); font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .casino-game .bet-row .guess-buttons button:hover { background: var(--primary); color: white; }
+        .casino-game .bet-row .guess-buttons button.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .casino-game .play-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; padding: 12px 30px; border-radius: 30px; color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 100%; }
+        .casino-game .play-btn:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(244, 164, 96, 0.4); }
+        .casino-game .result-box { margin-top: 16px; padding: 16px; border-radius: 16px; text-align: center; font-size: 1.2rem; font-weight: bold; display: none; }
+        .casino-game .result-box.win { display: block; background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .casino-game .result-box.lose { display: block; background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .casino-game .result-box .big { font-size: 2.5rem; }
+        .casino-game .result-box .detail { font-size: 1rem; margin-top: 6px; }
+        
         footer { text-align: center; color: var(--text-light); font-size: 0.7rem; margin-top: 28px; }
         @media (max-width: 500px) { .card { padding: 16px; } .tabs { gap: 6px; } .tab-btn { padding: 8px 14px; font-size: 0.8rem; } .chat-input-area { flex-direction: column; } .chat-input-area button { padding: 14px; } }
     </style>
@@ -282,6 +300,49 @@
             </div>
             <div id="transactionsList"><div class="loading">💸 Загрузка транзакций...</div></div>
         </div>
+
+        <!-- ===== ВКЛАДКА КАЗИНО ===== -->
+        <div id="tab-casino" class="tab-content">
+            <!-- Кости -->
+            <div class="casino-game">
+                <h3>🎲 Кости (угадай число 1–6, ×5)</h3>
+                <div class="bet-row">
+                    <label>Ставка:</label>
+                    <input type="number" id="diceBet" value="10" min="1" step="1">
+                </div>
+                <div class="bet-row">
+                    <label>Твоё число:</label>
+                    <div class="guess-buttons" id="diceGuessButtons">
+                        <button data-value="1" onclick="selectDiceGuess(1)">1</button>
+                        <button data-value="2" onclick="selectDiceGuess(2)">2</button>
+                        <button data-value="3" onclick="selectDiceGuess(3)">3</button>
+                        <button data-value="4" onclick="selectDiceGuess(4)">4</button>
+                        <button data-value="5" onclick="selectDiceGuess(5)">5</button>
+                        <button data-value="6" onclick="selectDiceGuess(6)">6</button>
+                    </div>
+                </div>
+                <button class="play-btn" onclick="playDice()">🎲 Бросить</button>
+                <div id="diceResult" class="result-box"></div>
+            </div>
+
+            <!-- Монетка -->
+            <div class="casino-game">
+                <h3>🪙 Монетка (орёл/решка, ×2)</h3>
+                <div class="bet-row">
+                    <label>Ставка:</label>
+                    <input type="number" id="coinBet" value="10" min="1" step="1">
+                </div>
+                <div class="bet-row">
+                    <label>Твой выбор:</label>
+                    <div class="guess-buttons" id="coinGuessButtons">
+                        <button data-value="heads" onclick="selectCoinGuess('heads')">🦅 Орёл</button>
+                        <button data-value="tails" onclick="selectCoinGuess('tails')">🪙 Решка</button>
+                    </div>
+                </div>
+                <button class="play-btn" onclick="playCoinFlip()">🪙 Подбросить</button>
+                <div id="coinResult" class="result-box"></div>
+            </div>
+        </div>
     </div>
     <footer>🐟 Карасикославия · Работает на сервере 🔥</footer>
 </div>
@@ -294,6 +355,96 @@ let updateInterval = null;
 let adminClickCount = 0;
 let adminTimer = null;
 
+// ===== ВЫБОР В КАЗИНО =====
+let selectedDiceGuess = null;
+let selectedCoinGuess = null;
+
+function selectDiceGuess(val) {
+    selectedDiceGuess = val;
+    document.querySelectorAll('#diceGuessButtons button').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`#diceGuessButtons button[data-value="${val}"]`).classList.add('selected');
+}
+
+function selectCoinGuess(val) {
+    selectedCoinGuess = val;
+    document.querySelectorAll('#coinGuessButtons button').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`#coinGuessButtons button[data-value="${val}"]`).classList.add('selected');
+}
+
+// ===== ИГРЫ =====
+async function playDice() {
+    if (!currentUser) { showNotification('Сначала войдите!'); return; }
+    const bet = parseInt(document.getElementById('diceBet').value);
+    if (isNaN(bet) || bet < 1) { showNotification('Введите корректную ставку'); return; }
+    if (!selectedDiceGuess) { showNotification('Выберите число'); return; }
+    
+    const resultBox = document.getElementById('diceResult');
+    resultBox.className = 'result-box';
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = '🔄 Бросок...';
+    
+    try {
+        const data = await apiFetch('/casino/dice', 'POST', {
+            login: currentUser.login,
+            bet: bet,
+            guess: selectedDiceGuess
+        });
+        const win = data.win;
+        const res = data.result;
+        const winnings = data.winnings;
+        const newBalance = data.new_balance;
+        
+        resultBox.className = 'result-box ' + (win ? 'win' : 'lose');
+        resultBox.innerHTML = `
+            <div class="big">🎲 ${res}</div>
+            <div class="detail">${win ? '✅ Вы выиграли!' : '❌ Вы проиграли'}</div>
+            <div class="detail">${win ? 'Выигрыш: +' + winnings : 'Потеря: ' + winnings} монет</div>
+            <div class="detail">💰 Новый баланс: ${newBalance}</div>
+        `;
+        updateBalance();
+    } catch (e) {
+        resultBox.className = 'result-box lose';
+        resultBox.innerHTML = '❌ ' + e.message;
+    }
+}
+
+async function playCoinFlip() {
+    if (!currentUser) { showNotification('Сначала войдите!'); return; }
+    const bet = parseInt(document.getElementById('coinBet').value);
+    if (isNaN(bet) || bet < 1) { showNotification('Введите корректную ставку'); return; }
+    if (!selectedCoinGuess) { showNotification('Выберите орла или решку'); return; }
+    
+    const resultBox = document.getElementById('coinResult');
+    resultBox.className = 'result-box';
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = '🔄 Подбрасываем...';
+    
+    try {
+        const data = await apiFetch('/casino/coinflip', 'POST', {
+            login: currentUser.login,
+            bet: bet,
+            guess: selectedCoinGuess
+        });
+        const win = data.win;
+        const res = data.result;
+        const winnings = data.winnings;
+        const newBalance = data.new_balance;
+        
+        resultBox.className = 'result-box ' + (win ? 'win' : 'lose');
+        resultBox.innerHTML = `
+            <div class="big">${res === 'heads' ? '🦅' : '🪙'}</div>
+            <div class="detail">${win ? '✅ Вы выиграли!' : '❌ Вы проиграли'}</div>
+            <div class="detail">${win ? 'Выигрыш: +' + winnings : 'Потеря: ' + winnings} монет</div>
+            <div class="detail">💰 Новый баланс: ${newBalance}</div>
+        `;
+        updateBalance();
+    } catch (e) {
+        resultBox.className = 'result-box lose';
+        resultBox.innerHTML = '❌ ' + e.message;
+    }
+}
+
+// ===== ОСТАЛЬНЫЕ ФУНКЦИИ (без изменений) =====
 function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme');
     const newTheme = current === 'dark' ? 'light' : 'dark';
@@ -313,6 +464,10 @@ async function apiFetch(path, method='GET', data=null) {
     const opts = { method, headers: { 'Content-Type': 'application/json' } };
     if (data) opts.body = JSON.stringify(data);
     const res = await fetch(API_URL + path, opts);
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Ошибка сервера');
+    }
     return res.json();
 }
 
@@ -1005,7 +1160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('loginInput').value = saved;
     }
     
-    // Инициализировать WebSocket для звонков после входа
+    // Инициализация WebSocket для звонков
     if (currentUser) {
         initCallWebSocket();
     }
